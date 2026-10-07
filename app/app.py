@@ -1728,14 +1728,11 @@ elif page == "👥 About Us & Team":
         st.markdown("""
         <div class="team-card">
             <div>
-<<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">DS</div>
-
                 <div style="color: #2563eb; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">ML Modeling & Architecture</div>
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">KH</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Kidanewold Hailu</div>
                 <div style="color: #2563eb; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Lead Data Scientist</div>
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
                 <div style="font-size: 0.82rem; color: #64748b; line-height: 1.5;">
                     Engineered the winning CatBoostRegressor model (R² 73.87%, MAE 6.92), chronological cross-validation, and feature ablation.
                 </div>
@@ -1751,15 +1748,11 @@ elif page == "👥 About Us & Team":
         st.markdown("""
         <div class="team-card">
             <div>
-<<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #059669);">DE</div>
-
                 <div style="color: #10b981; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">ETL, Timezone & PK/FK</div>
-=======
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #059669);">SM</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Selamawit Mekonnen</div>
                 <div style="color: #10b981; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Senior Data Engineer</div>
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
                 <div style="font-size: 0.82rem; color: #64748b; line-height: 1.5;">
                     Designed the 20-step data cleaning pipeline, canonical 12-zone mapping, UTC+3 clock shift, and zero duplicate zone-hours.
                 </div>
@@ -1775,13 +1768,11 @@ elif page == "👥 About Us & Team":
         st.markdown("""
         <div class="team-card">
             <div>
-<<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #f59e0b, #d97706);">OR</div>
                 <div style="color: #d97706; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Statistical Insights & EDA</div>
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #f59e0b, #d97706);">AH</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Abduselam Habtamu</div>
                 <div style="color: #d97706; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Operations Analyst</div>
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
                 <div style="font-size: 0.82rem; color: #64748b; line-height: 1.5;">
                     Authored the 14 time-series analyses across diurnal cycles, rain dose-response curves, and stadium post-match demand surges.
                 </div>
@@ -1797,13 +1788,11 @@ elif page == "👥 About Us & Team":
         st.markdown("""
         <div class="team-card">
             <div>
-<<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">FE</div>
                 <div style="color: #8b5cf6; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Full-Stack & UI/UX</div>
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">ZZ</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Zedingil Zelalem</div>
                 <div style="color: #8b5cf6; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Dashboard Developer</div>
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
                 <div style="font-size: 0.82rem; color: #64748b; line-height: 1.5;">
                     Built the 10-module Streamlit interface, live what-if simulation engine, interactive Plotly charts, and responsive design system.
                 </div>

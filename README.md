@@ -4,7 +4,6 @@
 ---
 
 ## 👥 Team Information (Deliverable G2)
-<<<<<<< HEAD
 - **Team Name**: `team_unbearable`
 - **Team Members**:
   - **Data Lead**: Data Cleaning, Timezone Alignment & Master Table Integration
@@ -23,18 +22,13 @@ This repository contains the complete, production-grade data science and machine
 ## 📂 Project Directory Structure (Section 6.1)
 
 ```text
-<<<<<<< HEAD
 team_unbearable/
-=======
 ├── README.md                                  # Setup, run order, summary, demo link (G2)
 ├── requirements.txt                           # Pinned package versions (G3)
 │
 ├── submission/                                # Scored prediction deliverables (G4)
-<<<<<<< HEAD
 │   └── team_unbearable_submission.csv           # 4,032 rows, verified columns [row_id, predicted_trips]
-=======
 │   └── team_unbearable_submission.csv           # 4,032 rows, verified columns [row_id, predicted_trips]
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 │
 ├── data/                                      # Data storage hierarchy
 │   ├── raw/                                   # Immutable original CSV exports (never edited)
@@ -89,14 +83,11 @@ team_unbearable/
 │   └── assets/                                # Bundled lookup tables and final model
 │
 └── presentation/                              # 5-Slide Presentation Deck (Deliverable F)
-<<<<<<< HEAD
     ├── team_unbearable_slides.pptx              # Presentation deck in PowerPoint format
     └── team_unbearable_slides.pdf               # Presentation deck in PDF format
-=======
     ├── team_unbearable_slides.pptx            # 5-slide PowerPoint deck for team_unbearable
     ├── team_unbearable_deck.html              # Interactive browser presentation deck
     └── team_unbearable_deck_prompt.md         # Slide specification & AI generator prompt
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 ```
 
 ---
@@ -105,21 +96,16 @@ team_unbearable/
 
 | Deliverable | Key Contents & Artifacts | Primary Location |
 | :--- | :--- | :--- |
-<<<<<<< HEAD
+
 | **Prediction Score** | 4,032 out-of-sample predictions, formatted against official test template | `submission/team_unbearable_submission.csv` |
-=======
 | **Prediction Score** | 4,032 out-of-sample predictions, formatted against official test template | `submission/team_qiyas_ai_submission.csv` |
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 | **A — Pipeline** | Cleaning log, join map, time-zone proof, 6 automated integrity checks, master files | `reports/A_cleaning_and_integration.md`, `data/processed/`, `notebooks/01_cleaning_and_integration.ipynb` |
 | **B — Analysis** | All 14 numbered tasks across Demand, Weather, Events, and Operations | `reports/B_analysis_report.md`, `notebooks/02_analysis_report.ipynb` |
 | **C — Visualizations** | 12 high-resolution figures (PNG) + structured interpretation captions | `figures/`, `figures/figure_captions.md`, `notebooks/03_visualizations.ipynb` |
 | **D — Modeling** | Baselines, 10-model leaderboard, rolling-origin validation, ablation study, leakage audit | `reports/D_model_evaluation.md`, `models/final_model.joblib`, `notebooks/04_modeling_and_evaluation.ipynb` |
 | **E — Deployed Demo** | Multi-page Streamlit application with test fortnight forecasts & live What-If scenario engine | `app/app.py`, `app/assets/` |
-<<<<<<< HEAD
 | **F — Slides** | 5-slide deck covering problem, cleaning, findings, modeling, and operational roadmap | `presentation/team_unbearable_slides.pptx`, `presentation/team_unbearable_slides.pdf` |
-=======
 | **F — Slides** | 5-slide hackathon presentation deck, interactive web viewer, and prompt | `presentation/team_unbearable_slides.pptx`, `presentation/team_unbearable_deck.html`, `presentation/team_unbearable_deck_prompt.md` |
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 | **G — Structure** | Root configuration, pinned dependencies, reproducibility verification | `README.md`, `requirements.txt` |
 
 ---
@@ -142,11 +128,8 @@ To reproduce all data science deliverables from scratch:
 1. **`notebooks/01_cleaning_and_integration.ipynb`**: Cleans raw data, aligns clocks to `Africa/Addis_Ababa`, executes safe joins, and exports `master_train.csv` and `master_test.csv`.
 2. **`notebooks/02_analysis_report.ipynb`**: Executes the 14 analytical investigations across volume, zones, weather response, and events.
 3. **`notebooks/03_visualizations.ipynb`**: Renders and exports `fig01` through `fig12` into `figures/`.
-<<<<<<< HEAD
 4. **`notebooks/04_modeling_and_evaluation.ipynb`**: Evaluates baseline models, trains CatBoost, performs ablation studies, exports `final_model.joblib`, and creates `submission/team_unbearable_submission.csv`.
-=======
 4. **`notebooks/04_modeling_and_evaluation.ipynb`**: Evaluates baseline models, trains CatBoost, performs ablation studies, exports `final_model.joblib`, and creates `submission/team_qiyas_ai_submission.csv`.
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 
 ### 3. Command-Line Pipeline Execution
 Alternatively, execute via modular Python scripts:
@@ -179,11 +162,8 @@ streamlit run app/app.py
 ---
 
 ## 🔒 Pre-Submission Verification Checklist (Section 6.4)
-<<<<<<< HEAD
 - [x] **Submission CSV**: `submission/team_unbearable_submission.csv` verified with exactly 4,032 rows, zero nulls, zero negative predictions, pre-filled `row_id` order intact.
-=======
 - [x] **Submission CSV**: `submission/team_qiyas_ai_submission.csv` verified with exactly 4,032 rows, zero nulls, zero negative predictions, pre-filled `row_id` order intact.
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 - [x] **Visualization Pack**: All 12 figures (`fig01` to `fig12`) exist under exact filenames, with all 12 entries described in `figures/figure_captions.md`.
 - [x] **Processed Assets**: `master_train.csv`, `master_test.csv`, and `data_dictionary_master.csv` verified in `data/processed/`.
 - [x] **Notebook Execution**: All 4 notebooks run top-to-bottom sequentially in a clean Python 3.10+ environment.
