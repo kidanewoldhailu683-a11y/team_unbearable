@@ -37,11 +37,11 @@ st.set_page_config(
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    
+
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
+
     /* Header Container */
     .app-header {
         background: linear-gradient(135deg, #0b192c 0%, #1e3e62 100%);
@@ -57,13 +57,13 @@ st.markdown("""
         gap: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.12);
     }
-    
+
     .brand-container {
         display: flex;
         align-items: center;
         gap: 1.25rem;
     }
-    
+
     .brand-logo {
         background: #000000;
         width: 54px;
@@ -76,7 +76,7 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(245, 166, 35, 0.35);
         border: 2px solid #f5a623;
     }
-    
+
     .brand-title {
         font-size: 1.65rem;
         font-weight: 800;
@@ -85,14 +85,14 @@ st.markdown("""
         color: #ffffff;
         line-height: 1.2;
     }
-    
+
     .brand-tagline {
         font-size: 0.88rem;
         color: #94a3b8;
         margin: 0.15rem 0 0 0;
         font-weight: 500;
     }
-    
+
     .status-badge {
         background: rgba(16, 185, 129, 0.15);
         border: 1px solid #10b981;
@@ -105,7 +105,7 @@ st.markdown("""
         align-items: center;
         gap: 0.45rem;
     }
-    
+
     .status-dot {
         width: 8px;
         height: 8px;
@@ -114,7 +114,7 @@ st.markdown("""
         display: inline-block;
         box-shadow: 0 0 8px #10b981;
     }
-    
+
     /* Metric KPI Cards */
     .metric-card {
         background: #ffffff;
@@ -132,7 +132,7 @@ st.markdown("""
     .metric-card.emerald { border-left-color: #10b981; }
     .metric-card.amber { border-left-color: #f59e0b; }
     .metric-card.purple { border-left-color: #8b5cf6; }
-    
+
     .metric-label {
         font-size: 0.82rem;
         font-weight: 700;
@@ -141,14 +141,14 @@ st.markdown("""
         color: #64748b;
         margin-bottom: 0.25rem;
     }
-    
+
     .metric-value {
         font-size: 1.85rem;
         font-weight: 800;
         color: #0f172a;
         line-height: 1.2;
     }
-    
+
     .metric-sub {
         font-size: 0.82rem;
         color: #94a3b8;
@@ -207,7 +207,7 @@ st.markdown("""
     }
     .er-badge.pk { background: #dbeafe; color: #1e40af; }
     .er-badge.fk { background: #fef3c7; color: #92400e; }
-    
+
     /* Team Cards */
     .team-card {
         background: #ffffff;
@@ -320,35 +320,35 @@ def render_footer():
 @st.cache_data
 def load_app_assets():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
+
     paths_to_check = [
         os.path.join(base_dir, "app", "assets"),
         os.path.join(base_dir, "data", "processed"),
         os.path.join(base_dir, "dataset", "processed")
     ]
-    
+
     asset_dir = None
     for p in paths_to_check:
         if os.path.exists(os.path.join(p, "master_train.csv")):
             asset_dir = p
             break
-            
+
     if asset_dir is None:
         st.error("Processed data assets not found! Please run src/cleaning_pipeline.py first.")
         st.stop()
-        
+
     train_df = pd.read_csv(os.path.join(asset_dir, "master_train.csv"))
     train_df['pickup_datetime'] = pd.to_datetime(train_df['pickup_datetime'])
     train_df['hour'] = train_df['pickup_datetime'].dt.hour
     train_df['dayofweek'] = train_df['pickup_datetime'].dt.day_name()
     train_df['date'] = train_df['pickup_datetime'].dt.date
-    
+
     test_df = pd.read_csv(os.path.join(asset_dir, "master_test.csv"))
     test_df['pickup_datetime'] = pd.to_datetime(test_df['pickup_datetime'])
     test_df['hour'] = test_df['pickup_datetime'].dt.hour
     test_df['dayofweek'] = test_df['pickup_datetime'].dt.day_name()
     test_df['date'] = test_df['pickup_datetime'].dt.date
-    
+
     # Load and merge precomputed CatBoost predictions
     sub_paths = [
         os.path.join(base_dir, "submission", "team_qiyas_ai_submission.csv"),
@@ -363,21 +363,21 @@ def load_app_assets():
                 break
             except Exception:
                 pass
-                
+
     if sub_df is not None and 'row_id' in sub_df.columns and 'predicted_trips' in sub_df.columns:
         test_df = test_df.merge(sub_df[['row_id', 'predicted_trips']], on='row_id', how='left')
     elif 'predicted_trips' not in test_df.columns:
         test_df['predicted_trips'] = 25.0
-    
+
     dim_zone = pd.read_csv(os.path.join(asset_dir, "dim_zone.csv")) if os.path.exists(os.path.join(asset_dir, "dim_zone.csv")) else None
     cleaning_audit = pd.read_csv(os.path.join(asset_dir, "cleaning_audit.csv")) if os.path.exists(os.path.join(asset_dir, "cleaning_audit.csv")) else None
     data_dict = pd.read_csv(os.path.join(asset_dir, "data_dictionary_master.csv")) if os.path.exists(os.path.join(asset_dir, "data_dictionary_master.csv")) else None
-    
+
     metrics_path = os.path.join(base_dir, "reports", "catboost_evaluation_summary.csv")
     if not os.path.exists(metrics_path):
         metrics_path = os.path.join(asset_dir, "catboost_evaluation_summary.csv")
     saved_metrics = pd.read_csv(metrics_path) if os.path.exists(metrics_path) else None
-    
+
     return train_df, test_df, dim_zone, cleaning_audit, data_dict, saved_metrics
 
 @st.cache_resource
@@ -453,12 +453,12 @@ render_header(page)
 # ==============================================================================
 if page == "🏠 Executive Dashboard":
     st.subheader("📊 Executive Overview & Operational KPIs")
-    
+
     total_trips = train_df['trips'].sum()
     avg_trips_hr = train_df['trips'].mean()
     num_zones = train_df['zone_clean'].nunique()
     val_r2 = saved_metrics['R2_Score'].iloc[0] * 100 if saved_metrics is not None else 73.87
-    
+
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.markdown(f"""
@@ -492,11 +492,11 @@ if page == "🏠 Executive Dashboard":
             <div class="metric-sub">12 Zones × 336 Hours (1–14 Nov)</div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     st.markdown("<br>", unsafe_allow_html=True)
-    
+
     col_left, col_right = st.columns([2, 1])
-    
+
     with col_left:
         st.markdown("#### 📈 Citywide Daily Ride Demand Trend (Jan 1 – Oct 31, 2025)")
         daily_trend = train_df.groupby('date')['trips'].sum().reset_index()
@@ -507,7 +507,7 @@ if page == "🏠 Executive Dashboard":
         )
         fig_trend.update_layout(hovermode="x unified", margin=dict(l=0, r=0, t=10, b=0))
         st.plotly_chart(fig_trend, use_container_width=True)
-        
+
     with col_right:
         st.markdown("#### 📍 Demand Distribution by Zone")
         zone_sum = train_df.groupby('zone_clean')['trips'].sum().reset_index().sort_values('trips', ascending=False)
@@ -517,11 +517,11 @@ if page == "🏠 Executive Dashboard":
         )
         fig_pie.update_layout(margin=dict(l=0, r=0, t=10, b=0), showlegend=False)
         st.plotly_chart(fig_pie, use_container_width=True)
-        
+
     # AI Automatic Business Insights & Recommendations Section
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### 💡 AI Operational Intelligence & Dispatch Recommendations")
-    
+
     r1, r2 = st.columns(2)
     with r1:
         st.markdown("""
@@ -533,7 +533,7 @@ if page == "🏠 Executive Dashboard":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with r2:
         st.markdown("""
         <div class="insight-box" style="border-left-color: #f59e0b;">
@@ -550,14 +550,14 @@ if page == "🏠 Executive Dashboard":
 # ==============================================================================
 elif page == "📈 Demand Analytics":
     st.subheader("📈 Temporal Demand Patterns & Diurnal Cycles")
-    
+
     t1, t2, t3 = st.tabs(["🔥 24-Hour × Day-of-Week Heatmap", "📅 Weekend vs Weekday Ratio", "📊 Monthly Growth Trend"])
-    
+
     with t1:
         st.markdown("#### Mean Hourly Trips (Hour of Day × Day of Week)")
         days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         pivot_df = train_df.pivot_table(index='dayofweek', columns='hour', values='trips', aggfunc='mean').reindex(days_order)
-        
+
         fig_heat = px.imshow(
             pivot_df,
             labels=dict(x="Hour of Day (EAT UTC+3)", y="Day of Week", color="Mean Trips"),
@@ -567,14 +567,14 @@ elif page == "📈 Demand Analytics":
         fig_heat.update_layout(margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_heat, use_container_width=True)
         st.info("💡 **Diurnal Cycle Insight**: Morning peak emerges at **8:00 AM (28.4 trips/hr)** and evening peak peaks at **6:00 PM (34.2 trips/hr)**. Off-peak night lull occurs between 02:00 – 04:00 (under 5 trips/hr).")
-        
+
     with t2:
         st.markdown("#### Weekend-to-Weekday Trip Volume Ratio by Zone")
         train_df['is_weekend_flag'] = train_df['dayofweek'].isin(['Saturday', 'Sunday'])
         ww_df = train_df.groupby(['zone_clean', 'is_weekend_flag'])['trips'].mean().unstack()
         ww_df['ratio'] = ww_df[True] / ww_df[False]
         ww_df = ww_df.reset_index().sort_values('ratio', ascending=False)
-        
+
         fig_bar = px.bar(
             ww_df, x='zone_clean', y='ratio', color='ratio',
             color_continuous_scale='Tealgrn',
@@ -585,7 +585,7 @@ elif page == "📈 Demand Analytics":
         fig_bar.update_layout(margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_bar, use_container_width=True)
         st.caption("Zones with ratio > 1.0 (e.g. Bole, Sarbet) observe higher weekend recreational/nightlife activity, whereas commercial centers (Merkato, Piazza) experience weekday volume dominance.")
-        
+
     with t3:
         st.markdown("#### Monthly Demand Progression (Jan – Oct 2025)")
         monthly = train_df.set_index('pickup_datetime').resample('ME')['trips'].sum().reset_index()
@@ -603,13 +603,13 @@ elif page == "📈 Demand Analytics":
 # ==============================================================================
 elif page == "📍 Zone Analytics":
     st.subheader("📍 Canonical Zone Profiles & Typology Clustering")
-    
+
     selected_zones = st.multiselect(
         "Select Zones to Compare Hourly Curves:",
         options=sorted(train_df['zone_clean'].unique()),
         default=['Bole', 'Kazanchis', 'Piazza', 'Merkato']
     )
-    
+
     if selected_zones:
         z_df = train_df[train_df['zone_clean'].isin(selected_zones)].groupby(['hour', 'zone_clean'])['trips'].mean().reset_index()
         fig_z = px.line(
@@ -619,22 +619,22 @@ elif page == "📍 Zone Analytics":
         )
         fig_z.update_layout(hovermode="x unified", margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_z, use_container_width=True)
-        
+
     st.markdown("---")
     st.markdown("#### 📋 12 Canonical Zones Operational Ranking & Peak Hours")
-    
+
     z_stats = train_df.groupby('zone_clean').agg(
         Total_Trips=('trips', 'sum'),
         Mean_Trips_Per_Hour=('trips', 'mean'),
         Peak_Hour_Trips=('trips', 'max')
     ).reset_index()
-    
+
     # Calculate peak hour per zone
     peak_hours = train_df.groupby(['zone_clean', 'hour'])['trips'].mean().reset_index()
     idx = peak_hours.groupby('zone_clean')['trips'].idxmax()
     peak_hour_map = peak_hours.loc[idx].set_index('zone_clean')['hour'].to_dict()
     z_stats['Peak_Hour'] = z_stats['zone_clean'].map(lambda z: f"{peak_hour_map.get(z, 18):02d}:00 EAT")
-    
+
     # Add Typology Classification
     def classify_zone(z):
         if z in ['Bole', 'Kazanchis']: return 'Commercial & Nightlife Hub'
@@ -643,7 +643,7 @@ elif page == "📍 Zone Analytics":
         else: return 'Residential & Suburban Corridor'
     z_stats['Operational_Typology'] = z_stats['zone_clean'].apply(classify_zone)
     z_stats = z_stats.sort_values('Total_Trips', ascending=False).reset_index(drop=True)
-    
+
     st.dataframe(z_stats, use_container_width=True)
 
 # ==============================================================================
@@ -651,9 +651,9 @@ elif page == "📍 Zone Analytics":
 # ==============================================================================
 elif page == "🌤️ Weather Analytics":
     st.subheader("🌤️ Weather Sensitivity & Clock Synchronization Proof")
-    
+
     w1, w2, w3 = st.tabs(["🕒 Timezone Clock Proof (+3h Shift)", "🌧️ Rain Dose-Response Curve", "🌡️ Temperature & Humidity Impact"])
-    
+
     with w1:
         st.markdown("#### Diurnal Temperature Profile Floored to Local Hour (Africa/Addis_Ababa)")
         clean_curve = train_df.groupby('hour')['temp_c'].mean().reset_index()
@@ -665,7 +665,7 @@ elif page == "🌤️ Weather Analytics":
         fig_clock.update_layout(margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_clock, use_container_width=True)
         st.success("✅ **Clock Synchronization Proof**: Daily air temperature peaks between **2:00 PM and 3:00 PM EAT (UTC+3)** and hits daily minimum at **05:00 AM**, proving that shifting naive UTC weather timestamps by +3 hours correctly aligns measurements with local solar time.")
-        
+
     with w2:
         st.markdown("#### Average Hourly Ride Demand by Rainfall Intensity Class")
         train_df['rain_class_label'] = pd.cut(
@@ -683,7 +683,7 @@ elif page == "🌤️ Weather Analytics":
         fig_rain.update_layout(margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_rain, use_container_width=True)
         st.caption("Demand increases sharply during light and moderate rain as pedestrian traffic shifts to vehicles, but saturates during torrential rainfall due to street flooding.")
-        
+
     with w3:
         st.markdown("#### Temperature vs Mean Ride Demand Correlation")
         temp_grouped = train_df.groupby(pd.cut(train_df['temp_c'], bins=12))['trips'].mean().reset_index()
@@ -713,14 +713,14 @@ elif page == "🌤️ Weather Analytics":
 # ==============================================================================
 elif page == "🎉 Events Analytics":
     st.subheader("🎉 Event Window Impact, Phasing & Holiday Sensitivity")
-    
+
     e1, e2 = st.tabs(["🏟️ Event Study & Phasing Impact", "📅 Public Holiday Index"])
-    
+
     with e1:
         st.markdown("#### Demand Comparison: Normal Hours vs Active Event Windows")
         event_stats = train_df.groupby('has_event')['trips'].mean().reset_index()
         event_stats['Status'] = event_stats['has_event'].map({0: 'Standard Operating Hours', 1: 'Active Event Windows'})
-        
+
         c_evt1, c_evt2 = st.columns([1, 1])
         with c_evt1:
             fig_evt = px.bar(
@@ -730,13 +730,13 @@ elif page == "🎉 Events Analytics":
             )
             fig_evt.update_layout(margin=dict(l=0, r=0, t=20, b=0), showlegend=False)
             st.plotly_chart(fig_evt, use_container_width=True)
-            
+
         with c_evt2:
             st.markdown("#### Event Window Phasing Breakdown")
             before_trips = train_df[train_df['event_before'] == 1]['trips'].mean() if 'event_before' in train_df.columns else 24.2
             during_trips = train_df[train_df['event_during'] == 1]['trips'].mean() if 'event_during' in train_df.columns else 26.8
             after_trips = train_df[train_df['event_after'] == 1]['trips'].mean() if 'event_after' in train_df.columns else 35.4
-            
+
             phase_df = pd.DataFrame({
                 'Phase': ['Pre-Event (-2h)', 'During Event', 'Post-Event (+2h)'],
                 'Mean_Trips': [before_trips, during_trips, after_trips]
@@ -749,7 +749,7 @@ elif page == "🎉 Events Analytics":
             fig_phase.update_layout(margin=dict(l=0, r=0, t=20, b=0))
             st.plotly_chart(fig_phase, use_container_width=True)
             st.caption("Post-event dispersal (+2h window) generates the largest single demand surge (+42% uplift).")
-            
+
     with e2:
         st.markdown("#### National Public Holiday Demand Sensitivity")
         hol_stats = train_df.groupby('has_public_holiday')['trips'].mean().reset_index()
@@ -767,13 +767,13 @@ elif page == "🎉 Events Analytics":
 # ==============================================================================
 elif page == "🔮 Operational Forecasting":
     st.subheader("🔮 Operational 24-Hour Trip & Resource Forecasting")
-    
+
     fc_mode = st.radio(
         "SELECT FORECASTING ENGINE MODE:",
         ["📅 Mode 1: Official Test Fortnight (1–14 Nov 2025)", "🎛️ Mode 2: Live What-If Scenario Simulator"],
         horizontal=True
     )
-    
+
     if "Mode 1" in fc_mode:
         st.markdown("Official out-of-sample predictions for the 4,032 test records across 12 Addis Ababa zones.")
         f1, f2 = st.columns(2)
@@ -786,24 +786,24 @@ elif page == "🔮 Operational Forecasting":
                 options=available_dates,
                 format_func=lambda d: d.strftime('%A, %d %B %Y')
             )
-            
+
         slice_feat = test_df[(test_df['zone_clean'] == selected_zone) & (test_df['date'] == selected_date)].copy().sort_values('hour')
-        
+
         if len(slice_feat) == 0:
             st.warning(f"No records found for {selected_zone} on {selected_date}.")
         else:
             if 'predicted_trips' not in slice_feat.columns or slice_feat['predicted_trips'].isna().any():
                 slice_feat['predicted_trips'] = 25.0
-                
+
             total_24h_trips = slice_feat['predicted_trips'].sum()
             peak_hour_row = slice_feat.loc[slice_feat['predicted_trips'].idxmax()]
             peak_hour_time = f"{int(peak_hour_row['hour']):02d}:00"
             peak_trips = peak_hour_row['predicted_trips']
-            
+
             avg_zone_fare = 250.0  # Birr
             est_required_drivers = int(np.ceil(total_24h_trips / 1.3))
             est_gross_revenue = total_24h_trips * avg_zone_fare
-            
+
             st.markdown("<br>", unsafe_allow_html=True)
             m1, m2, m3, m4 = st.columns(4)
             with m1:
@@ -838,15 +838,15 @@ elif page == "🔮 Operational Forecasting":
                     <div class="metric-sub">Estimated Fare Value</div>
                 </div>
                 """, unsafe_allow_html=True)
-                
+
             st.markdown("<br>", unsafe_allow_html=True)
-            
+
             avg_temp = slice_feat['temp_c'].mean() if 'temp_c' in slice_feat.columns else 21.0
             total_rain = slice_feat['rain_mm'].sum() if 'rain_mm' in slice_feat.columns else 0.0
             has_evt = (slice_feat['has_event'].sum() > 0) if 'has_event' in slice_feat.columns else False
             lookup_str = f"🌤️ **Auto-Lookup Weather**: Mean Temp {avg_temp:.1f}°C, Total Rain {total_rain:.1f}mm | 🎉 **Events**: {'Active Event Window Recorded' if has_evt else 'Standard Operating Hours'}"
             st.info(lookup_str)
-            
+
             fig_fc = px.line(
                 slice_feat, x='hour', y='predicted_trips',
                 title=f"24-Hour Hourly Ride Demand Forecast — {selected_zone} ({selected_date.strftime('%A, %d %B %Y')})",
@@ -856,7 +856,7 @@ elif page == "🔮 Operational Forecasting":
             fig_fc.update_traces(line_color='#10b981', line_width=3)
             fig_fc.update_layout(hovermode="x unified", margin=dict(l=0, r=0, t=35, b=0))
             st.plotly_chart(fig_fc, use_container_width=True)
-            
+
             with st.expander("📋 View Full 24-Hour Forecast Table Details"):
                 display_cols = [c for c in ['row_id', 'zone_clean', 'pickup_datetime', 'hour', 'temp_c', 'rain_mm', 'has_event', 'predicted_trips'] if c in slice_feat.columns]
                 st.dataframe(slice_feat[display_cols], use_container_width=True)
@@ -865,11 +865,11 @@ elif page == "🔮 Operational Forecasting":
         # MODE 2: LIVE WHAT-IF SCENARIO GENERATOR (INTERACTIVE ML PIPELINE)
         st.markdown("#### 🎛️ Live What-If Scenario Generator (Interactive Machine Learning Pipeline)")
         st.caption("Interactively calibrate all 13 operational forecasting inputs and map them directly into the fitted CatBoost Top 10 Feature Importance pipeline to simulate point and 24-hour ride demand.")
-        
+
         # Supported evaluation horizon according to Hackathon Instructions: 1–14 November 2025
         VALID_START = pd.Timestamp('2025-11-01').date()
         VALID_END = pd.Timestamp('2025-11-14').date()
-        
+
         # Safe Session State Callback to fix invalid dates without StreamlitWidgetAlreadyInstantiatedError
         def set_correct_date_callback():
             st.session_state["sim_d"] = pd.Timestamp('2025-11-05').date()
@@ -883,15 +883,15 @@ elif page == "🔮 Operational Forecasting":
                 According to the <strong>Qiyas Data Science & AI Hackathon Instructions</strong> (Section 1 & 2.1):<br>
                 The operational forecast horizon is strictly <strong>1–14 November 2025</strong> (14 days, 336 hours).
             </div>
-            
+
             **Date Analysis for entered input <code>{entered_dt}</code>:**
             - <strong>Year:</strong> <code>{entered_dt.year}</code> {'❌ (Must be 2025)' if entered_dt.year != 2025 else '✅ Correct'}
             - <strong>Month:</strong> <code>{entered_dt.strftime('%B')} ({entered_dt.month})</code> {'❌ (Must be November)' if entered_dt.month != 11 else '✅ Correct'}
             - <strong>Day:</strong> <code>{entered_dt.day}</code> {'❌ (Must be between 1 and 14)' if not (1 <= entered_dt.day <= 14) else '✅ Correct'}
-            
+
             Please click the button below to automatically correct your target date to an official evaluation date:
             """, unsafe_allow_html=True)
-            
+
             if st.button("✨ Make It Correct: Auto-Set to 5 Nov 2025", type="primary", key="popup_autofix", on_click=set_correct_date_callback):
                 st.rerun()
 
@@ -922,22 +922,22 @@ elif page == "🔮 Operational Forecasting":
                 <strong style="color: #1e3a8a; font-size: 0.88rem;">📍 1. Spatial & Temporal Dimensions</strong>
             </div>
             """, unsafe_allow_html=True)
-            
+
             # 1. Zone
             all_zones = sorted(train_df['zone_clean'].unique())
             default_zone_idx = all_zones.index("Bole") if "Bole" in all_zones else 0
             u_zone = st.selectbox("Zone:", options=all_zones, index=default_zone_idx, key="u_zone", help="Destination sub-city in Addis Ababa (Default: Bole)")
-            
+
             # 2. Forecast date
             if "sim_d" not in st.session_state:
                 st.session_state["sim_d"] = pd.Timestamp('2025-11-05').date()
             u_date = st.date_input("Forecast date (1–14 Nov 2025):", key="sim_d", help="Operational horizon strictly evaluated 1–14 Nov 2025 (Default: 2025-11-05)")
-            
+
             # 3. Forecast hour/time
             hour_options = [f"{h:02d}:00" for h in range(24)]
             u_hour_str = st.selectbox("Forecast hour/time:", options=hour_options, index=18, key="u_hour", help="Target dispatch hour for point forecasting (Default: 18:00)")
             u_hour = int(u_hour_str.split(':')[0])
-            
+
             # 4. Public holiday
             u_holiday = st.radio("Public holiday:", ["No", "Yes", "Automatically detected"], index=0, horizontal=True, key="u_holiday", help="Ethiopian national holiday status (Default: No)")
 
@@ -947,20 +947,20 @@ elif page == "🔮 Operational Forecasting":
                 <strong style="color: #0369a1; font-size: 0.88rem;">🌤️ 2. Weather & Climate Conditions</strong>
             </div>
             """, unsafe_allow_html=True)
-            
+
             # 5. Weather condition
             u_weather_cond = st.selectbox("Weather condition:", ["Rain", "Clear / Sunny", "Cloudy / Overcast", "Thunderstorm / Heavy Storm"], index=0, key="u_wcond", help="Atmospheric condition (Default: Rain)")
-            
+
             # 6. Temperature
             u_temp = st.number_input("Temperature (°C):", min_value=5.0, max_value=40.0, value=18.0, step=0.5, key="u_temp", help="Ambient air temperature in Celsius (Default: 18°C)")
-            
+
             # 7. Rainfall/precipitation
             default_rain = 4.5 if "Rain" in u_weather_cond or "Storm" in u_weather_cond else 0.0
             u_rain = st.number_input("Rainfall/precipitation (mm):", min_value=0.0, max_value=50.0, value=default_rain, step=0.1, key="u_rain", help="Precipitation depth in mm (Default: 4.5 mm)")
-            
+
             # 8. Humidity
             u_humidity = st.number_input("Humidity (%):", min_value=10.0, max_value=100.0, value=72.0, step=1.0, key="u_hum", help="Relative humidity percentage (Default: 72%)")
-            
+
             # 9. Wind speed
             u_wind = st.number_input("Wind speed (km/h):", min_value=0.0, max_value=60.0, value=12.0, step=1.0, key="u_wind", help="Surface wind speed in km/h (Default: 12 km/h)")
 
@@ -970,18 +970,18 @@ elif page == "🔮 Operational Forecasting":
                 <strong style="color: #6d28d9; font-size: 0.88rem;">🎉 3. Urban Event Dynamics</strong>
             </div>
             """, unsafe_allow_html=True)
-            
+
             # 10. Event presence
             u_evt_pres = st.radio("Event presence:", ["Yes", "No"], index=0, horizontal=True, key="u_evt_pres", help="Is an active event taking place? (Default: Yes)")
-            
+
             # 11. Event type
             evt_type_options = ["Concert", "Football / Stadium Match", "International Conference / AU Summit", "Cultural Festival / Exhibition", "Religious Gathering"]
             u_evt_type = st.selectbox("Event type:", options=evt_type_options, index=0, key="u_evt_type", help="Category of public gathering (Default: Concert)")
-            
+
             # 12. Event attendance
             default_att = 5000 if u_evt_pres == "Yes" else 0
             u_attendance = st.number_input("Event attendance:", min_value=0, max_value=100000, value=default_att, step=500, key="u_att", help="Estimated venue crowd attendance (Default: 5,000)")
-            
+
             # 13. Event timing
             timing_options = ["During event", "Pre-event (-2h arrival window)", "Post-event (+2h departure surge)", "No event active at this hour"]
             u_timing = st.selectbox("Event timing:", options=timing_options, index=0, key="u_timing", help="Operational timing relative to event lifecycle (Default: During event)")
@@ -1003,7 +1003,7 @@ elif page == "🔮 Operational Forecasting":
                 </div>
             </div>
             """, unsafe_allow_html=True)
-            
+
             c_fix1, c_fix2 = st.columns([1, 3])
             with c_fix1:
                 st.button("✨ Make It Correct", type="primary", key="inline_autofix", on_click=set_correct_date_callback)
@@ -1012,17 +1012,17 @@ elif page == "🔮 Operational Forecasting":
                     show_date_correction_popup(u_date)
 
         st.markdown("---")
-        
+
         # TOP 10 FEATURE IMPORTANCE ARCHITECTURE & MAPPING
         with st.expander("🌟 Top 10 Feature Importance Architecture & Live Input Mapping", expanded=True):
             st.markdown("##### 🏆 Model Decision Drivers & Input Feature Linkage")
             st.caption("How your 13 inputs map into the Top 10 features responsible for **>90.5%** of CatBoost predictions:")
-            
+
             # Calculate derived feature states for mapping display
             r_class_derived = 3 if u_rain >= 7.6 else (2 if u_rain >= 2.5 else (1 if u_rain > 0.1 else 0))
             r_class_names = {0: '0: None (0mm)', 1: '1: Light (<2.5mm)', 2: '2: Moderate (<7.6mm)', 3: '3: Heavy (≥7.6mm)'}
             holiday_val = 1 if u_holiday == "Yes" else 0
-            
+
             map_cols = st.columns(5)
             with map_cols[0]:
                 st.markdown(f"""
@@ -1120,7 +1120,7 @@ elif page == "🔮 Operational Forecasting":
                 adv_phase_shift = st.slider("Rush-Hour Timing Phase Shift (Hours):", min_value=-3, max_value=3, value=0, step=1, format="%+d hrs")
 
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         # EXECUTE SIMULATION BUTTON
         sim_run_clicked = st.button("🚀 Run Live Scenario Simulation with User Inputs", type="primary", use_container_width=True)
 
@@ -1131,17 +1131,17 @@ elif page == "🔮 Operational Forecasting":
                 with st.spinner("Executing 29-feature feature engineering pipeline & CatBoost model inference for point & 24-hour horizon..."):
                     target_zone = u_zone
                     zid = zone_to_id.get(target_zone, 1)
-                    
+
                     # 1. Determine Rain Class & Accumulated Rain
                     r_class = 3 if u_rain >= 7.6 else (2 if u_rain >= 2.5 else (1 if u_rain > 0.1 else 0))
                     r_3h = u_rain * 2.0
-                    
+
                     # 2. Determine Event Flags
                     has_evt_flag = int(u_evt_pres == "Yes")
                     has_sports = int(has_evt_flag and ("Football" in u_evt_type or "Sports" in u_evt_type))
                     has_concert = int(has_evt_flag and "Concert" in u_evt_type)
                     is_holiday_flag = 1 if u_holiday == "Yes" else 0
-                    
+
                     # 3. Build Point Forecast for Selected Hour (e.g. 18:00)
                     dt_focal = pd.Timestamp(f"{u_date} {u_hour:02d}:00:00")
                     dow_focal = dt_focal.dayofweek
@@ -1149,16 +1149,16 @@ elif page == "🔮 Operational Forecasting":
                     month_focal = dt_focal.month
                     is_wknd_focal = int(dow_focal >= 5)
                     is_pday_focal = int(day_focal in [1, 2, 3, 28, 29, 30, 31])
-                    
+
                     h_shifted_focal = (u_hour + adv_phase_shift) % 24
                     h_sin_focal = np.sin(2 * np.pi * h_shifted_focal / 24.0)
                     h_cos_focal = np.cos(2 * np.pi * h_shifted_focal / 24.0)
                     h_sin_base_focal = np.sin(2 * np.pi * u_hour / 24.0)
                     h_cos_base_focal = np.cos(2 * np.pi * u_hour / 24.0)
-                    
+
                     zdh_focal = agg_zdh.get((target_zone, dow_focal, u_hour), zone_recent.get(target_zone, 35.0))
                     zh_focal = agg_zh.get((target_zone, u_hour), zone_recent.get(target_zone, 35.0))
-                    
+
                     # Determine event activity at focal hour based on timing selection
                     if u_evt_pres == "Yes":
                         if u_timing == "Pre-event (-2h arrival window)":
@@ -1176,7 +1176,7 @@ elif page == "🔮 Operational Forecasting":
                     else:
                         focal_has_evt = 0
                         focal_att = 0.0
-                        
+
                     # Single-Hour Point Scenario Row
                     point_scen_row = {
                         'hour': u_hour, 'dayofweek': dow_focal, 'day': day_focal, 'month': month_focal,
@@ -1196,7 +1196,7 @@ elif page == "🔮 Operational Forecasting":
                         'zone_x_rain': f"{zid}_rain_{r_class}",
                         'zone_x_hour': f"{zid}_h_{u_hour}"
                     }
-                    
+
                     # Single-Hour Baseline Row
                     point_base_row = {
                         'hour': u_hour, 'dayofweek': dow_focal, 'day': day_focal, 'month': month_focal,
@@ -1216,26 +1216,26 @@ elif page == "🔮 Operational Forecasting":
                         'zone_x_rain': f"{zid}_rain_0",
                         'zone_x_hour': f"{zid}_h_{u_hour}"
                     }
-                    
+
                     df_point_scen = pd.DataFrame([point_scen_row])
                     df_point_base = pd.DataFrame([point_base_row])
-                    
+
                     if model_pipeline is not None:
                         point_pred_scen = np.clip(model_pipeline.predict(df_point_scen), 0, None)[0]
                         point_pred_base = np.clip(model_pipeline.predict(df_point_base), 0, None)[0]
                     else:
                         point_pred_scen = 60.6
                         point_pred_base = 45.6
-                        
+
                     point_delta = point_pred_scen - point_pred_base
                     point_pct = (point_delta / point_pred_base * 100) if point_pred_base > 0 else 0.0
                     point_drivers = int(np.ceil(point_pred_scen / 1.3))
-                    
+
                     # 4. Build Complete 24-Hour Diurnal Curves
                     baseline_rows = []
                     whatif_rows = []
                     dt_range = pd.date_range(f"{u_date} 00:00:00", f"{u_date} 23:00:00", freq='h')
-                    
+
                     for dt in dt_range:
                         h = dt.hour
                         dow = dt.dayofweek
@@ -1243,17 +1243,17 @@ elif page == "🔮 Operational Forecasting":
                         month = dt.month
                         is_weekend = int(dow >= 5)
                         is_payday = int(day in [1, 2, 3, 28, 29, 30, 31])
-                        
+
                         h_sin_base = np.sin(2 * np.pi * h / 24.0)
                         h_cos_base = np.cos(2 * np.pi * h / 24.0)
-                        
+
                         h_shifted = (h + adv_phase_shift) % 24
                         h_sin_whatif = np.sin(2 * np.pi * h_shifted / 24.0)
                         h_cos_whatif = np.cos(2 * np.pi * h_shifted / 24.0)
-                        
+
                         zdh = agg_zdh.get((target_zone, dow, h), zone_recent.get(target_zone, 25.0))
                         zh = agg_zh.get((target_zone, h), zone_recent.get(target_zone, 25.0))
-                        
+
                         # Baseline 24h
                         baseline_rows.append({
                             'hour': h, 'dayofweek': dow, 'day': day, 'month': month,
@@ -1272,7 +1272,7 @@ elif page == "🔮 Operational Forecasting":
                             'zone_x_rain': f"{zid}_rain_0",
                             'zone_x_hour': f"{zid}_h_{h}"
                         })
-                        
+
                         # Hourly Event Window around focal hour
                         if u_evt_pres == "Yes":
                             # Event is active in a window around the focal hour (e.g. 16:00 to 21:00)
@@ -1281,7 +1281,7 @@ elif page == "🔮 Operational Forecasting":
                         else:
                             h_is_event_window = 0
                             h_event_att = 0.0
-                            
+
                         whatif_rows.append({
                             'hour': h, 'dayofweek': dow, 'day': day, 'month': month,
                             'is_weekend': is_weekend, 'is_payday': is_payday,
@@ -1300,20 +1300,20 @@ elif page == "🔮 Operational Forecasting":
                             'zone_x_rain': f"{zid}_rain_{r_class}",
                             'zone_x_hour': f"{zid}_h_{h}"
                         })
-                        
+
                     base_df = pd.DataFrame(baseline_rows)
                     scen_df = pd.DataFrame(whatif_rows)
-                    
+
                     if model_pipeline is not None:
                         base_preds = np.clip(model_pipeline.predict(base_df), 0, None)
                         scen_preds = np.clip(model_pipeline.predict(scen_df), 0, None)
                     else:
                         base_preds = np.full(24, 25.0)
                         scen_preds = np.full(24, 30.0)
-                        
+
                     base_df['Baseline_Trips'] = np.round(base_preds, 1)
                     scen_df['WhatIf_Trips'] = np.round(scen_preds, 1)
-                    
+
                     comp_df = pd.DataFrame({
                         'Hour': [f"{h:02d}:00" for h in range(24)],
                         'Hour_Int': list(range(24)),
@@ -1322,18 +1322,18 @@ elif page == "🔮 Operational Forecasting":
                         'Delta_Trips': scen_df['WhatIf_Trips'] - base_df['Baseline_Trips']
                     })
                     comp_df['Delta_Pct'] = np.where(comp_df['Baseline_Trips'] > 0, (comp_df['Delta_Trips'] / comp_df['Baseline_Trips']) * 100, 0.0)
-                    
+
                     tot_base = comp_df['Baseline_Trips'].sum()
                     tot_scen = comp_df['WhatIf_Trips'].sum()
                     tot_delta = tot_scen - tot_base
                     pct_delta = (tot_delta / tot_base * 100) if tot_base > 0 else 0.0
-                    
+
                     peak_scen_row = comp_df.loc[comp_df['WhatIf_Trips'].idxmax()]
                     peak_base_row = comp_df.loc[comp_df['Baseline_Trips'].idxmax()]
-                    
+
                     # DISPLAY RESULTS
                     st.success(f"✅ Live Machine Learning Forecast Completed for **{target_zone}** on **{u_date.strftime('%A, %d %B %Y')}**!")
-                    
+
                     # TARGET HOUR HERO CARD (e.g. 18:00)
                     st.markdown(f"""
                     <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; border-radius: 14px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.3); border: 1px solid rgba(255,255,255,0.15);">
@@ -1361,7 +1361,7 @@ elif page == "🔮 Operational Forecasting":
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
-                    
+
                     # 4 Target Hour KPI Cards
                     tk1, tk2, tk3, tk4 = st.columns(4)
                     with tk1:
@@ -1373,12 +1373,12 @@ elif page == "🔮 Operational Forecasting":
                     with tk4:
                         surge_mult = 1.35 if point_pct > 25 else (1.15 if point_pct > 10 else 1.0)
                         st.metric(f"Dynamic Pricing Surge", f"{surge_mult:.2f}x", "Incentivize driver repositioning")
-                        
+
                     st.markdown("<br>", unsafe_allow_html=True)
-                    
+
                     # Plotly Dual-Line Chart with Target Hour Highlight
                     fig_comp = go.Figure()
-                    
+
                     # Baseline trace
                     fig_comp.add_trace(go.Scatter(
                         x=comp_df['Hour'],
@@ -1388,7 +1388,7 @@ elif page == "🔮 Operational Forecasting":
                         line=dict(color='#64748b', width=2.5, dash='dash'),
                         marker=dict(size=6, color='#64748b')
                     ))
-                    
+
                     # What-If trace
                     fig_comp.add_trace(go.Scatter(
                         x=comp_df['Hour'],
@@ -1398,7 +1398,7 @@ elif page == "🔮 Operational Forecasting":
                         line=dict(color='#8b5cf6', width=3.5),
                         marker=dict(size=8, color='#7c3aed')
                     ))
-                    
+
                     # Highlight selected forecast hour
                     fig_comp.add_trace(go.Scatter(
                         x=[u_hour_str],
@@ -1407,7 +1407,7 @@ elif page == "🔮 Operational Forecasting":
                         name=f'Target Hour ({u_hour_str})',
                         marker=dict(size=14, color='#38bdf8', symbol='star', line=dict(color='#ffffff', width=2))
                     ))
-                    
+
                     # Add vertical dashed reference line for target hour
                     fig_comp.add_shape(
                         type="line",
@@ -1432,7 +1432,7 @@ elif page == "🔮 Operational Forecasting":
                         borderwidth=1,
                         borderpad=4
                     )
-                    
+
                     fig_comp.update_layout(
                         title=f"24-Hour Ride Demand Curve: Baseline vs. Scenario ({target_zone} • {u_date.strftime('%d %b %Y')}) — Target Hour: {u_hour_str}",
                         xaxis_title="Hour of Day (EAT UTC+3)",
@@ -1443,7 +1443,7 @@ elif page == "🔮 Operational Forecasting":
                         margin=dict(l=0, r=0, t=45, b=0)
                     )
                     st.plotly_chart(fig_comp, use_container_width=True)
-                    
+
                     # 4 Daily Aggregate KPI Cards
                     st.markdown("##### 📊 24-Hour Aggregate Horizon Overview")
                     k1, k2, k3, k4 = st.columns(4)
@@ -1472,7 +1472,7 @@ elif page == "🔮 Operational Forecasting":
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
-                        
+
                     with ins_col2:
                         # Top Active Drivers Bar Chart
                         active_drivers_data = [
@@ -1502,9 +1502,9 @@ elif page == "🔮 Operational Forecasting":
 # ==============================================================================
 elif page == "🎯 Model Performance":
     st.subheader("🎯 Model Benchmark Leaderboard & Empirical Diagnostics")
-    
+
     st.markdown("#### Official Model Validation Summary (Validation Set: Oct 18 – 31, 2025)")
-    
+
     # Load actual metrics dynamically
     if saved_metrics is not None:
         r2_val = saved_metrics['R2_Score'].iloc[0]
@@ -1513,7 +1513,7 @@ elif page == "🎯 Model Performance":
         fit_t = saved_metrics['Training_Time_Sec'].iloc[0]
     else:
         r2_val, mae_val, rmse_val, fit_t = 0.7387, 6.9201, 15.6269, 8.45
-        
+
     mp1, mp2, mp3, mp4 = st.columns(4)
     with mp1:
         st.metric("Winning Model R²", f"{r2_val*100:.2f}%", "73.87% Explained Variance")
@@ -1523,31 +1523,31 @@ elif page == "🎯 Model Performance":
         st.metric("Root Mean Squared Error (RMSE)", f"{rmse_val:.2f}", "Spike penalization score")
     with mp4:
         st.metric("Training Execution Time", f"{fit_t:.2f} sec", "84k training samples")
-        
+
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("#### 🏆 10-Model Benchmark Leaderboard")
-    
+
     models_df = pd.DataFrame({
         'Model': ['CatBoostRegressor (Winner)', 'HistGradientBoosting', 'LightGBM', 'XGBoost', 'GradientBoosting', 'RandomForest', 'DecisionTree', 'Lasso', 'Ridge', 'LinearRegression'],
         'Validation_R2': [r2_val, 0.6212, 0.6195, 0.6150, 0.5980, 0.5820, 0.5410, 0.4820, 0.4815, 0.4810],
         'Validation_MAE': [mae_val, 9.7810, 9.8120, 9.9040, 10.1200, 10.3500, 11.0200, 11.9500, 11.9600, 11.9700],
         'Validation_RMSE': [rmse_val, 16.7400, 16.7800, 16.8800, 17.2500, 17.5900, 18.4300, 19.5800, 19.5900, 19.6000]
     }).sort_values('Validation_R2', ascending=False)
-    
+
     st.dataframe(models_df, use_container_width=True)
-    
+
     st.markdown("---")
     st.markdown("#### 🌟 Top Feature Importance Weights (Extracted from Fitted CatBoost Pipeline)")
-    
+
     if model_pipeline is not None:
         cat_est = model_pipeline.named_steps['regressor']
         prep_est = model_pipeline.named_steps['preprocessor']
         f_names = prep_est.get_feature_names_out()
         imps = cat_est.get_feature_importance()
-        
+
         f_imp_df = pd.DataFrame({'Feature': [fn.replace('num__', '').replace('cat__', '') for fn in f_names], 'Importance': imps})
         f_imp_top = f_imp_df.sort_values('Importance', ascending=False).head(12)
-        
+
         fig_imp = px.bar(
             f_imp_top[::-1], x='Importance', y='Feature', orientation='h',
             title="Top 12 Features Ranked by Permutation & Tree Splitting Weight (%)",
@@ -1561,7 +1561,7 @@ elif page == "🎯 Model Performance":
 # ==============================================================================
 elif page == "📊 Data Quality & Integrity":
     st.subheader("📊 Dynamic Data Quality Verification & Integrity Audits")
-    
+
     # Calculate quality checks live
     train_nulls = train_df.isna().sum().sum()
     train_dups = train_df.duplicated(subset=['zone_id', 'pickup_datetime']).sum()
@@ -1569,7 +1569,7 @@ elif page == "📊 Data Quality & Integrity":
     unmapped_zones = train_df['zone_clean'].isna().sum()
     total_train_rows = len(train_df)
     total_test_rows = len(test_df)
-    
+
     dq1, dq2, dq3, dq4 = st.columns(4)
     with dq1:
         st.metric("Train Duplicate Zone-Hours", f"{train_dups}", "Strict ONE ROW rule: PASS")
@@ -1579,7 +1579,7 @@ elif page == "📊 Data Quality & Integrity":
         st.metric("Unmapped Raw Zone Records", f"{unmapped_zones}", "100% Canonical Mapping")
     with dq4:
         st.metric("Weather Join Match Rate", "100.0%", "Validate many_to_one: PASS")
-        
+
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("#### 🛡️ Automated Integrity Test Suite Output")
     st.code(f"""
@@ -1591,7 +1591,7 @@ elif page == "📊 Data Quality & Integrity":
 [PASS] Timezone standard: Africa/Addis_Ababa (UTC+3) with dayfirst=True DD/MM/YYYY handling
 [PASS] Leakage Prevention: Operational variables (active_drivers, avg_wait_min, avg_fare_birr) excluded
     """, language="text")
-    
+
     if cleaning_audit is not None:
         st.markdown("#### 📋 Step-by-Step Data Engineering Audit Log")
         st.dataframe(cleaning_audit, use_container_width=True)
@@ -1601,11 +1601,11 @@ elif page == "📊 Data Quality & Integrity":
 # ==============================================================================
 elif page == "🔗 Data Architecture (PK-FK)":
     st.subheader("🔗 Data Architecture, Relational Schema & Join Map")
-    
+
     st.markdown("""
     ### 🏗️ Entity Relationship Architecture (ONE ROW = ONE ZONE + ONE HOUR)
     """)
-    
+
     er_c1, er_c2, er_c3 = st.columns(3)
     with er_c1:
         st.markdown("""
@@ -1622,7 +1622,7 @@ elif page == "🔗 Data Architecture (PK-FK)":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with er_c2:
         st.markdown("""
         <div class="er-card">
@@ -1639,7 +1639,7 @@ elif page == "🔗 Data Architecture (PK-FK)":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with er_c3:
         st.markdown("""
         <div class="er-card">
@@ -1656,13 +1656,13 @@ elif page == "🔗 Data Architecture (PK-FK)":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     st.markdown("""
     <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 1rem 1.25rem; font-size: 0.88rem; color: #1e40af; margin-bottom: 1.5rem;">
         <strong>🔑 Master Composite Join Key</strong>: <code>(zone_id, pickup_datetime)</code> forms the primary logical modeling key. Every join strictly preserves row counts without cardinality expansion.
     </div>
     """, unsafe_allow_html=True)
-    
+
     if data_dict is not None:
         st.markdown("#### 📖 Master Data Dictionary")
         st.dataframe(data_dict, use_container_width=True)
@@ -1672,19 +1672,19 @@ elif page == "🔗 Data Architecture (PK-FK)":
 # ==============================================================================
 elif page == "👥 About Us & Team":
     st.subheader("👥 Project Purpose, Engineering Mission & Hackathon Team")
-    
+
     st.markdown("""
     ### 🎯 Project Purpose & Mission
     The **Addis Ride Demand Intelligence Platform** was conceived and engineered for the **Qiyas Data Science & AI Hackathon** at Addis Ababa University.
-    
+
     In developing urban economies like Addis Ababa, transportation infrastructure faces immense daily pressure. Ride-hailing drivers often concentrate in central business areas while peripheral residential districts experience driver deficits, exacerbated by abrupt afternoon rainstorms and major cultural/sporting gatherings.
-    
+
     Our mission is to equip transit operations with a **leakage-free, explainable, and production-ready demand forecasting system** that accurately anticipates zone-level ride volume 24 to 48 hours in advance, reducing passenger wait times and maximizing driver earnings across all 12 zones of Addis Ababa.
     """)
-    
+
     st.markdown("---")
     st.markdown("### 🛠️ Production Technologies Used")
-    
+
     tc1, tc2, tc3, tc4 = st.columns(4)
     with tc1:
         st.markdown("""
@@ -1718,14 +1718,11 @@ elif page == "👥 About Us & Team":
         - Live What-If Simulator
         - Automated Audit Suite
         """)
-        
+
     st.markdown("---")
-<<<<<<< HEAD
     st.markdown("### 👨‍💻 Engineering Team Members")
-=======
     st.markdown("### 👨‍💻 Team Unbearable Members")
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
-    
+
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.markdown("""
@@ -1733,9 +1730,8 @@ elif page == "👥 About Us & Team":
             <div>
 <<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">DS</div>
-                
+
                 <div style="color: #2563eb; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">ML Modeling & Architecture</div>
-=======
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">KH</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Kidanewold Hailu</div>
                 <div style="color: #2563eb; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Lead Data Scientist</div>
@@ -1750,14 +1746,14 @@ elif page == "👥 About Us & Team":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with m2:
         st.markdown("""
         <div class="team-card">
             <div>
 <<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #059669);">DE</div>
-                
+
                 <div style="color: #10b981; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">ETL, Timezone & PK/FK</div>
 =======
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #059669);">SM</div>
@@ -1774,16 +1770,14 @@ elif page == "👥 About Us & Team":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with m3:
         st.markdown("""
         <div class="team-card">
             <div>
 <<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #f59e0b, #d97706);">OR</div>
-                
                 <div style="color: #d97706; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Statistical Insights & EDA</div>
-=======
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #f59e0b, #d97706);">AH</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Abduselam Habtamu</div>
                 <div style="color: #d97706; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Operations Analyst</div>
@@ -1798,16 +1792,14 @@ elif page == "👥 About Us & Team":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with m4:
         st.markdown("""
         <div class="team-card">
             <div>
 <<<<<<< HEAD
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">FE</div>
-                
                 <div style="color: #8b5cf6; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Full-Stack & UI/UX</div>
-=======
                 <div class="avatar-placeholder" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">ZZ</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a;">Zedingil Zelalem</div>
                 <div style="color: #8b5cf6; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.75rem;">Dashboard Developer</div>

@@ -6,9 +6,6 @@
 ## 👥 Team Information (Deliverable G2)
 <<<<<<< HEAD
 - **Team Name**: `team_unbearable`
-=======
-- **Team Name**: `team_qiyas_ai`
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 - **Team Members**:
   - **Data Lead**: Data Cleaning, Timezone Alignment & Master Table Integration
   - **Analysis & Viz Lead**: Exploratory Data Analysis, 14 Tasks & 12 Visualization Figures
@@ -29,8 +26,6 @@ This repository contains the complete, production-grade data science and machine
 <<<<<<< HEAD
 team_unbearable/
 =======
-team_qiyas_ai/
->>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 ├── README.md                                  # Setup, run order, summary, demo link (G2)
 ├── requirements.txt                           # Pinned package versions (G3)
 │
@@ -38,7 +33,7 @@ team_qiyas_ai/
 <<<<<<< HEAD
 │   └── team_unbearable_submission.csv           # 4,032 rows, verified columns [row_id, predicted_trips]
 =======
-│   └── team_qiyas_ai_submission.csv           # 4,032 rows, verified columns [row_id, predicted_trips]
+│   └── team_unbearable_submission.csv           # 4,032 rows, verified columns [row_id, predicted_trips]
 >>>>>>> 7b6dbf6386ddc7fab4fc8f1a2c81f9cabf215de6
 │
 ├── data/                                      # Data storage hierarchy
