@@ -96,19 +96,17 @@ team_unbearable/
 
 | Deliverable | Key Contents & Artifacts | Primary Location |
 | :--- | :--- | :--- |
-
-| **Prediction Score** | 4,032 out-of-sample predictions, formatted against official test template | `submission/team_unbearable_submission.csv` |
-| **Prediction Score** | 4,032 out-of-sample predictions, formatted against official test template | `submission/team_qiyas_ai_submission.csv` |
-| **A — Pipeline** | Cleaning log, join map, time-zone proof, 6 automated integrity checks, master files | `reports/A_cleaning_and_integration.md`, `data/processed/`, `notebooks/01_cleaning_and_integration.ipynb` |
-| **B — Analysis** | All 14 numbered tasks across Demand, Weather, Events, and Operations | `reports/B_analysis_report.md`, `notebooks/02_analysis_report.ipynb` |
-| **C — Visualizations** | 12 high-resolution figures (PNG) + structured interpretation captions | `figures/`, `figures/figure_captions.md`, `notebooks/03_visualizations.ipynb` |
-| **D — Modeling** | Baselines, 10-model leaderboard, rolling-origin validation, ablation study, leakage audit | `reports/D_model_evaluation.md`, `models/final_model.joblib`, `notebooks/04_modeling_and_evaluation.ipynb` |
-| **E — Deployed Demo** | Multi-page Streamlit application with test fortnight forecasts & live What-If scenario engine | `app/app.py`, `app/assets/` |
-| **F — Slides** | 5-slide deck covering problem, cleaning, findings, modeling, and operational roadmap | `presentation/team_unbearable_slides.pptx`, `presentation/team_unbearable_slides.pdf` |
-| **F — Slides** | 5-slide hackathon presentation deck, interactive web viewer, and prompt | `presentation/team_unbearable_slides.pptx`, `presentation/team_unbearable_deck.html`, `presentation/team_unbearable_deck_prompt.md` |
-| **G — Structure** | Root configuration, pinned dependencies, reproducibility verification | `README.md`, `requirements.txt` |
+| **Predictions** | Submission files (4,032 out-of-sample predictions) | `submission/` |
+| **A — Pipeline** | Cleaning logs, join maps, and automated checks | `reports/A_cleaning_and_integration.md`, `data/processed/`, `notebooks/01_cleaning_and_integration.ipynb` |
+| **B — Analysis** | Numbered tasks across Demand, Weather, Events, and Operations | `reports/B_analysis_report.md`, `notebooks/02_analysis_report.ipynb` |
+| **C — Visualizations** | High-resolution figures and captions | `figures/`, `notebooks/03_visualizations.ipynb` |
+| **D — Modeling** | Leaderboards, validation, and evaluation | `reports/D_model_evaluation.md`, `models/final_model.joblib`, `notebooks/04_modeling_and_evaluation.ipynb` |
+| **E — Deployed Demo** | Streamlit application and assets | `app/app.py`, `app/assets/` |
+| **F — Slides** | Presentation decks and web viewers | `presentation/` |
+| **G — Structure** | Configuration and reproducibility tools | `README.md`, `requirements.txt` |
 
 ---
+
 
 ## 🚀 Quick Start & Execution Order
 
