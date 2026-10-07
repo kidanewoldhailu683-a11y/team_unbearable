@@ -1,0 +1,14 @@
+Feature Name,Category,Formula,Source Column,Rationale,Known at Forecast Time?
+hour,Calendar,pickup_datetime.dt.hour,pickup_datetime,Captures diurnal rush hour demand cycles,Yes
+dayofweek,Calendar,pickup_datetime.dt.dayofweek,pickup_datetime,Captures day-of-week commuting variation,Yes
+is_weekend,Calendar,(dayofweek >= 5),pickup_datetime,Differentiates weekend leisure from weekday work trips,Yes
+is_payday,Calendar,"day.isin([1,2,3,28,29,30,31])",pickup_datetime,Captures monthly salary spending surges,Yes
+rain_3h_sum,Weather,"rolling_sum(rain_mm, window=3h)",rain_mm,Measures cumulative ground wetness and prolonged rain impact,Yes
+rain_class,Weather,"cut(rain_mm, [0, 0.1, 2.5, 7.6, inf])",rain_mm,Categorizes rain severity into discrete non-linear impact tiers,Yes
+is_event_active,Events,start_datetime <= time <= end_datetime,events_calendar,"Flags active matches, concerts, and public holidays",Yes
+event_type,Events,categorical(event_type),events_calendar,Distinguishes demand surge magnitude across event categories,Yes
+month_trend,Trend,pickup_datetime.dt.month,pickup_datetime,Extrapolates platform-wide monthly ride growth trend,Yes
+lag_168h,Lag,trips.shift(168),trips (1 week ago),Exact trip demand at same zone and hour 7 days ago,Yes
+lag_336h,Lag,trips.shift(336),trips (2 weeks ago),Exact trip demand at same zone and hour 14 days ago,Yes
+rolling_7d_mean_trips,Rolling,"rolling_mean(trips, window=168h)",trips (train history),Recent 7-day moving average demand per zone,Yes
+zone_dow_hour_mean_trips,Baseline,"mean(trips | zone, dayofweek, hour)",trips (train history),Historical baseline demand expectation per zone and time slot,Yes

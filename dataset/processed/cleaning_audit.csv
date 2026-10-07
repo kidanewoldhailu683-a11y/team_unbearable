@@ -1,0 +1,4 @@
+step,affected_rows,description,action_taken
+Train Raw De-duplication,846,"Found 846 duplicate (zone_id, pickup_datetime) in raw train",Aggregated trips by sum and kept first record_id
+Weather De-duplication,724,Found 724 duplicate weather timestamps,Aggregated numeric columns using median per weather_datetime
+Event Multi-Zone Expansion,302,Expanded 165 event rows into 467 zone-event records,Multi-zone & Citywide events expanded across canonical zones
