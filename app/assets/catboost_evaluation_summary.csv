@@ -1,0 +1,2 @@
+Model,RMSE,MAE,R2_Score,MAPE,Training_Time_Sec
+CatBoostRegressor,15.6269,6.9201,0.7387,2999143314089092.0,8.45
